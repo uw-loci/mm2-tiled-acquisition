@@ -220,6 +220,7 @@ def main():
             v["catalog"].set(v["catalog"].get() or Path(f).stem)
             v["base"].set(Path(f).stem)
             show_info()
+            count.set("Positions to generate: - (press Calculate)")
 
     def browse_dir():
         d = filedialog.askdirectory()
@@ -279,9 +280,8 @@ def main():
         except Exception:
             count.set("Positions to generate: -")
 
-    for k in ("file", "fov_w", "fov_h", "scan", "overlap", "tol"):
-        v[k].trace_add("write", update_count)
-    update_count()
+    ttk.Button(frm, text="Calculate", command=update_count).grid(row=n + 4, column=2, sticky="w", pady=8)
+    count.set("Positions to generate: - (press Calculate)")
     info = tk.Text(frm, height=14, width=90, font=("Consolas", 9), state="disabled")
     info.grid(row=n + 5, column=0, columnspan=3, sticky="we")
     root.mainloop()
