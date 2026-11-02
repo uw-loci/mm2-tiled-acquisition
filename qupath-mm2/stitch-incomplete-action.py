@@ -19,7 +19,9 @@ DEFAULT_POS_FILE = Path(
     r"C:\QPSC\Data\JOVE_PPM\Brightfield_10x_4\46286_8529\TileConfiguration_Stage.pos"
 )
 PIXEL_SIZE_UM = 0.52
-DOWNSAMPLE = 4
+DOWNSAMPLE = 1
+X_INVERT = True
+Y_INVERT = False
 
 
 def load_positions(pos_file):
@@ -147,7 +149,11 @@ def stitch(
     accumulated = np.zeros(shape, dtype=np.float32)
     weight = np.zeros(shape, dtype=np.float32)
     for row, col, tile in offsets:
-        window = (slice(None), slice(row, row + tile.shape[1]), slice(col, col + tile.shape[2]))
+        window = (
+            slice(None),
+            slice(row, row + tile.shape[1]),
+            slice(col, col + tile.shape[2]),
+        )
         valid = ~np.isnan(tile)
         accumulated[window] += np.where(valid, tile, 0)
         weight[window] += valid
@@ -178,11 +184,13 @@ def main():
     parser.add_argument(
         "--x-invert",
         action="store_true",
+        default=X_INVERT,
         help="flip each tile horizontally before stitching",
     )
     parser.add_argument(
         "--y-invert",
         action="store_true",
+        default=Y_INVERT,
         help="flip each tile vertically before stitching",
     )
     args = parser.parse_args()
